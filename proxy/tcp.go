@@ -13,6 +13,11 @@ func (p *Proxy) handleTCP(conn net.Conn) error {
 	defer conn.Close()
 	loopback, _ := netip.AddrFromSlice(conn.LocalAddr().(*net.TCPAddr).IP)
 	tgt := p.GetProjection(loopback)
+    	if tgt == "34.117.118.44" {
+        // If the destination IP matches the bypassed IP, simply return without proxying the traffic
+        	p.log.Tracef("Bypassing traffic for destination IP: %v", tgt)
+        	return nil
+    	}
 	if tgt == "" {
 		return fmt.Errorf("mapped target address not found: %v", loopback)
 	}
