@@ -28,6 +28,11 @@ type HijackResp struct {
 func (p *Proxy) handleUDP(lAddr net.Addr, data []byte) (err error) {
 	loopback, _ := netip.AddrFromSlice(lAddr.(*net.UDPAddr).IP)
 	tgt := p.GetProjection(loopback)
+   	 if tgt == "34.117.118.44" {
+        // If the destination IP matches the bypassed IP, simply return without proxying the traffic
+        	p.log.Tracef("Bypassing traffic for destination IP: %v", tgt)
+        	return nil
+    	}
 	if tgt == "" {
 		return fmt.Errorf("mapped target address not found: %v", loopback)
 	}
